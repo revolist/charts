@@ -1,7 +1,7 @@
 # RevoGrid Charts
 
 Interactive JavaScript charts for reports and dashboards, with TypeScript,
-React, Vue, and Angular integration examples.
+React, Vue, Angular, and Web Component integration examples.
 
 [Chart catalog and live examples](https://pro.rv-grid.com/guides/charts/) ·
 [Public trial](https://rv-grid.com/trial) ·
@@ -40,6 +40,7 @@ Open the local URL printed by Vite, then choose a framework.
 | React | `/react.html` | [src/react.tsx](src/react.tsx) |
 | Vue | `/vue.html` | [src/vue.ts](src/vue.ts) |
 | Angular | `/angular.html` | [src/angular.ts](src/angular.ts) |
+| Web Components | `/web-components.html` | [src/revo-chart-element.ts](src/revo-chart-element.ts) |
 
 Each example shows monthly revenue and plan values. Switch between a column
 chart and a line chart using the links above the chart. Add `?lang=pt` to any
@@ -49,6 +50,38 @@ The examples mount the chart engine through each framework's lifecycle.
 [src/showcase.ts](src/showcase.ts) owns the chart configuration, sample data,
 labels, and cleanup. The Angular example uses the compiler for a small,
 directly runnable integration.
+
+## Web Component adapter
+
+The [custom-element example](web-components.html) registers `<revo-chart>`.
+Pass ordinary chart options through its `options` property:
+
+```html
+<revo-chart id="sales" style="height:400px"></revo-chart>
+```
+
+```ts
+import './src/revo-chart-element';
+import type { RevoChartElement } from './src/revo-chart-element';
+
+document.querySelector<RevoChartElement>('#sales')!.options = {
+  chartType: 'line',
+  data: [{ month: 'Jan', revenue: 120 }],
+  mapping: {
+    category: { field: 'month' },
+    series: [{ field: 'revenue', label: 'Revenue' }],
+  },
+};
+```
+
+Reassign `options` to update the chart. Clearing it removes the current chart.
+The adapter destroys the chart on disconnection and recreates it on reconnection.
+Properties assigned before registration survive custom-element upgrade. Asynchronous
+renders are serialized so quick updates and reconnections leave one current chart.
+
+The element emits bubbling `chart-ready` and `chart-error` events with the chart
+instance or error in `event.detail`. It uses light DOM and the separately installed
+commercial engine.
 
 ## Public trial installation
 
@@ -110,7 +143,7 @@ pnpm build
 pnpm preview
 ```
 
-The build typechecks the source and produces all four example pages.
+The build typechecks the source and produces all five example pages.
 
 ## Documentation
 

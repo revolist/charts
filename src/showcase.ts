@@ -1,11 +1,11 @@
-import { createChart } from '@revolist/charts-trial';
+import { createChart, type ChartOptions } from '@revolist/charts-trial';
 import './styles.css';
 
 const messages = {
   en: {
     framework: 'Framework',
     title: 'Revenue at a glance',
-    description: 'Compare monthly revenue with the plan using the same data across four framework integrations.',
+    description: 'Compare monthly revenue with the plan using the same data across framework and Web Component integrations.',
     revenue: 'Revenue',
     plan: 'Plan',
     line: 'Line chart',
@@ -17,7 +17,7 @@ const messages = {
   pt: {
     framework: 'Integração',
     title: 'Receita em destaque',
-    description: 'Compare a receita mensal com o plano usando os mesmos dados em quatro integrações.',
+    description: 'Compare a receita mensal com o plano usando os mesmos dados em integrações de frameworks e Web Components.',
     revenue: 'Receita',
     plan: 'Plano',
     line: 'Gráfico de linhas',
@@ -54,15 +54,12 @@ export function setupPage(framework: string): HTMLElement {
   return document.getElementById('app')!;
 }
 
-export function mountRevenueChart(container: HTMLElement): () => void {
-  let disposed = false;
-  let destroy: (() => void) | undefined;
+export function createRevenueOptions(): Omit<ChartOptions, 'container'> {
   const month = new Intl.DateTimeFormat(language, { month: 'short' });
   const revenue = [128, 146, 139, 172, 188, 205];
   const plan = [130, 140, 150, 165, 180, 195];
 
-  void createChart({
-    container,
+  return {
     chartType,
     data: revenue.map((value, index) => ({
       month: month.format(new Date(2026, index, 1)),
@@ -77,7 +74,13 @@ export function mountRevenueChart(container: HTMLElement): () => void {
       ],
     },
     presentation: { title: labels.title },
-  }).then((chart) => {
+  };
+}
+
+export function mountRevenueChart(container: HTMLElement): () => void {
+  let disposed = false;
+  let destroy: (() => void) | undefined;
+  void createChart({ ...createRevenueOptions(), container }).then((chart) => {
     destroy = () => chart.destroy();
     if (disposed) destroy();
   }).catch((error: unknown) => {
