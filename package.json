@@ -15,7 +15,7 @@
     "preview": "vite preview --host 127.0.0.1"
   },
   "engines": {
-    "node": ">=22"
+    "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
   },
   "packageManager": "pnpm@10.25.0",
   "dependencies": {

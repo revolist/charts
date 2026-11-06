@@ -23,7 +23,7 @@ for each type's supported options.
 
 ## Run the examples
 
-Use Node.js 22 or later and pnpm 10.
+Use Node.js 24 LTS (24.15 or later) and pnpm 10.
 
 ```sh
 git clone https://github.com/revolist/charts.git
